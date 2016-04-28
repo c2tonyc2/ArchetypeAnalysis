@@ -1,0 +1,44 @@
+#drop-cards {
+    position: relative;
+    background-color: white;
+    color: black;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+#default {
+    display: none;
+}
+
+#test-chart {
+    text-align: center;
+}
+
+#image-container {
+    position: relative;
+    bottom: 40px;
+    text-align: center;
+    padding-right: 100px;
+}
+
+#card-chart-container {
+    text-align: center;
+    color: white;
+    font-family: Tahoma;
+}
+
+body {
+    background-color: #725596;
+}
+
+.tick text {
+   stroke: white;
+   fill: white;
+}
+
+.btn {
+    padding-top: 25px;
+}

@@ -1,0 +1,189 @@
+{% load staticfiles %}
+<head>
+<link rel="stylesheet" type="text/css" href="{% static 'analyze/deck.css' %}">
+</head>
+
+<div id="card-chart-container">
+    <h1>Your Archetype is: {{ archName }}</h1>
+    <h2>Pick a card to show its Percent Distribution Chart</h2>
+    <select id="drop-cards" onchange="graph()">
+        <option id="default"> -- select an option -- </option>
+    </select>
+    <div class="btn">
+    <a href="/analyze/"><button>Enter a New Deck</button></a>
+    </div>
+    <br>
+    <div class="bar-chart" id="test-chart">
+        <span id="image-container"><img id="card-image"/></span>
+    </div>
+</div>
+
+
+
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+
+{% if cards %}
+var cards = {{ cards|safe }}
+var sorted_cards = [];
+
+for (var card in cards) {
+    if (cards.hasOwnProperty(card)) {
+        sorted_cards.push(card);
+    }
+}
+
+sorted_cards = sorted_cards.sort();
+
+for (i=0; i<sorted_cards.length; i++) {
+    card = sorted_cards[i];
+    var countArray = [];
+    for (var count = 1; count < 5; count++) {
+        countArray.push(cards[card][count])
+    }
+    cards[card] = countArray
+}
+
+var selectDropdown = $('#drop-cards');
+
+for (i=0; i<sorted_cards.length; i++) {
+    card = sorted_cards[i];
+    console.log(card);
+    if (cards.hasOwnProperty(card)) {
+        selectDropdown.append($("<option/>", {class:"card-opt",
+                                              id: card.replace(/ |'|,/gi, '-'),
+                                              value: card,
+                                              text: card}));
+    }
+}
+
+{% endif %}
+
+{% if ids %}
+
+var ids = {{ ids|safe }};
+{% endif %}
+
+// Replace the tilde with a multiverseid
+var image_url = "http://gatherer.wizards.com/" +
+                "Handlers/Image.ashx?multiverseid=~&type=card";
+
+function graph() {
+    var cardName = $('#drop-cards option:selected').text();
+    var chartdata = cards[cardName];
+
+    var margin = {top: 30, right: 20, bottom: 50, left: 50}
+
+    var height = 400 - margin.top - margin.bottom,
+        width = 720 - margin.left - margin.right,
+        barWidth = 40,
+        barOffset = 20;
+
+    var dynamicColor;
+
+    var yScale = d3.scale.linear()
+        .domain([0, d3.max(chartdata)])
+        .range([0, height])
+
+    var xScale = d3.scale.ordinal()
+        .domain(d3.range(1, chartdata.length + 1))
+        .rangeBands([0, width])
+
+    var colors = d3.scale.linear()
+        .domain([0, chartdata.length * .33, chartdata.length * .66, chartdata.length])
+        .range(['#d6e9c6', '#faebcc', '#ebccd1'])
+
+    d3.select("svg").remove();
+
+    var cardChart = d3.select('#test-chart').append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .style('background', '#725596')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+        .selectAll('rect').data(chartdata)
+        .enter().append('rect')
+        .style({
+            'fill': function (data, i) {
+                return colors(i);
+            }, 'stroke': '#31708f', 'stroke-width': '5'
+        })
+        .attr('width', xScale.rangeBand())
+        .attr('x', function (data, i) {
+            return xScale(i + 1);
+        })
+        .attr('height', 0)
+        .attr('y', height)
+        .on('mouseover', function (data) {
+            dynamicColor = this.style.fill;
+            d3.select(this)
+                .style('fill', '#3c763d')
+        })
+
+        .on('mouseout', function (data) {
+            d3.select(this)
+                .style('fill', dynamicColor)
+        });
+    cardChart.transition()
+        .attr('height', function (data) {
+            return yScale(data);
+        })
+        .attr('y', function (data) {
+            return height - yScale(data);
+        })
+        .delay(function (data, i) {
+            return i * 20;
+        })
+        .duration(2000)
+        .ease('linear');
+
+    var verticalGuideScale = d3.scale.linear()
+        .domain([0, d3.max(chartdata)])
+        .range([height, 0])
+
+    var vAxis = d3.svg.axis()
+        .scale(verticalGuideScale)
+        .orient('left')
+        .ticks(10)
+
+    var verticalGuide = d3.select('svg').append('g')
+    vAxis(verticalGuide)
+    verticalGuide.attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+    verticalGuide.selectAll('path')
+        .style({fill: 'none', stroke: "#ffffff"})
+    verticalGuide.selectAll('line')
+        .style({stroke: "#ffffff"})
+
+    var hAxis = d3.svg.axis()
+        .scale(xScale)
+        .orient('bottom')
+        .ticks(chartdata.size)
+
+    var horizontalGuide = d3.select('svg').append('g')
+    hAxis(horizontalGuide)
+    horizontalGuide.attr('transform', 'translate(' + margin.left + ', ' + (height + margin.top) + ')')
+    horizontalGuide.selectAll('path')
+        .style({fill: 'none', stroke: "#ffffff"})
+    horizontalGuide.selectAll('line')
+        .style({stroke: "#ffffff"});
+
+    d3.select("svg").append("text")
+                    .attr("transform", "translate(" + (width / 1.75) + " ," + (height + 1.4 * margin.bottom) + ")")
+                    .style("text-anchor", "middle")
+                    .attr("font-family", "Tahoma")
+                    .attr("fill", "white")
+                    .text("Number of Copies");
+
+    d3.select("svg").append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 3/4 * margin.right)
+                    .attr("x", -width/3.25)
+                    .style("text-anchor", "middle")
+                    .attr("font-family", "Tahoma")
+                    .attr("fill", "white")
+                    .text("Percentage (%)");
+
+    $('#card-image').attr("src", image_url.replace('~', ids[cardName]));
+}
+</script>

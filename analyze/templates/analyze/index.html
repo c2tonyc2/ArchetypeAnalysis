@@ -1,0 +1,26 @@
+{% load staticfiles %}
+<head>
+<link rel="stylesheet" type="text/css" href="{% static 'analyze/index.css' %}">
+</head>
+
+{% if error_message %}
+<div id="error">
+    <p><strong>{{ error_message }}</strong></p>
+    <p><strong>Remember to use .dec format such as:<br>
+        4 Fiendslayer Paladin <br>
+        3 Deadeye Navigator
+    </strong></p>
+</div>
+{% endif %}
+
+<form action="{% url 'analyze:deck' %}" method="post">
+{% csrf_token %}
+<div class="deckLabel">Enter your deck here:</div>
+<div class="deckTextLabel">
+    <textarea name="cards" cols="40" rows="5"></textarea>
+    <div>
+        <input type="submit" value="Submit" />
+    </div>
+</div>
+
+</form>

@@ -1,0 +1,34 @@
+body {
+    background-color: #725596;
+}
+
+.deckLabel {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-family: Tahoma, sans-serif;
+    font-size: 48px;
+}
+
+.deckTextLabel {
+    text-align: center;
+    padding-top: 50px;
+}
+
+textarea {
+    /*padding-top: 50px;*/
+    color: white;
+    background-color: #725596;
+    width: 600px;
+	height: 120px;
+	border: 3px solid #cccccc;
+	padding: 5px;
+	font-family: Tahoma, sans-serif;
+    font-weight: bold;
+}
+
+#error {
+    color: white;
+    text-align: center;
+    font-family: Tahoma, sans-serif;
+}

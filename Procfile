@@ -1,0 +1,1 @@
+web: gunicorn ArchetypeAnalysis.wsgi --log-file -
