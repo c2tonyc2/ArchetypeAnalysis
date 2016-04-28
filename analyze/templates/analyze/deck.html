@@ -9,13 +9,14 @@
     <select id="drop-cards" onchange="graph()">
         <option id="default"> -- select an option -- </option>
     </select>
-    <div class="btn">
-    <a href="/analyze/"><button>Enter a New Deck</button></a>
-    </div>
     <br>
     <div class="bar-chart" id="test-chart">
         <span id="image-container"><img id="card-image"/></span>
     </div>
+</div>
+
+<div class="btn">
+    <input type="button" onclick="location.href='/analyze';" value="Enter a New Deck" />
 </div>
 
 
@@ -49,7 +50,6 @@ var selectDropdown = $('#drop-cards');
 
 for (i=0; i<sorted_cards.length; i++) {
     card = sorted_cards[i];
-    console.log(card);
     if (cards.hasOwnProperty(card)) {
         selectDropdown.append($("<option/>", {class:"card-opt",
                                               id: card.replace(/ |'|,/gi, '-'),

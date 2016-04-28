@@ -40,5 +40,8 @@ body {
 }
 
 .btn {
-    padding-top: 25px;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 5%;
 }

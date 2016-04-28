@@ -224,9 +224,6 @@ def launcher(args, fileDeck=False):
         if similarity > bestValue:
             bestMatch = standard[archetype]
             bestValue = similarity
-    # if bestMatch:
-    #     for line in analyzeArchetype(bestMatch):
-    #         print(line)
     return bestMatch
 
 if __name__ == '__main__':
