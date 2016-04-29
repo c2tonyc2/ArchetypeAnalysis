@@ -29,7 +29,6 @@ def deck(request):
         })
     ids = deck_stats.getMultiverseIDDict(JSONdata, standard,
                                          matchedArchetype.cardData.keys())
-    # print(repr(json.dumps(matchedArchetype.getPercentDict())))
     return render(request, 'analyze/deck.html',
                   {'cards': json.dumps(matchedArchetype.getPercentDict()),
                    'archName': matchedArchetype.name,

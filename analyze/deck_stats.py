@@ -40,6 +40,7 @@ class Archetype:
     def __init__(self, name):
         self.name = name
         self.cardData = {}
+        self.totalDecks = 0
 
     def add(self, cardDict):
         for card in cardDict:
@@ -48,15 +49,15 @@ class Archetype:
                 for copies in range(1, 5):
                     self.cardData[card][copies] = 0
             self.cardData[card][cardDict[card]] += 1
+        self.totalDecks += 1
 
     def getPercentDict(self):
         percentDict = {}
         for card in self.cardData:
-            total = sum(self.cardData[card].values())
             percentDict[card] = {}
-            for count in range(1, 5):
-                percentDict[card][count] = float(
-                                    self.cardData[card][count]) / total * 100
+            for count in self.cardData[card].keys():
+                percentDict[card][count] = float(self.cardData[card][count]) / \
+                                           self.totalDecks * 100
         return percentDict
 
     def __getitem__(self, card):

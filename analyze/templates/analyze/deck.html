@@ -40,8 +40,17 @@ sorted_cards = sorted_cards.sort();
 for (i=0; i<sorted_cards.length; i++) {
     card = sorted_cards[i];
     var countArray = [];
-    for (var count = 1; count < 5; count++) {
-        countArray.push(cards[card][count])
+        buffer = -4;
+    for (var count = 1; count < 25; count++) {
+        if (cards[card].hasOwnProperty(count)) {
+            if (count > 5) {
+                for (j=0; j < buffer; j++) {
+                    countArray.push(0)
+                }
+            }
+            countArray.push(cards[card][count])
+        }
+        buffer++
     }
     cards[card] = countArray
 }
@@ -64,7 +73,6 @@ for (i=0; i<sorted_cards.length; i++) {
 
 var ids = {{ ids|safe }};
 {% endif %}
-
 // Replace the tilde with a multiverseid
 var image_url = "http://gatherer.wizards.com/" +
                 "Handlers/Image.ashx?multiverseid=~&type=card";
